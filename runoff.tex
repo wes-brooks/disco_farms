@@ -6,6 +6,8 @@
 \usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{subfig}
+\usepackage{verbatim}
+\usepackage{fullpage}
 \usepackage{pstricks,pst-node,pst-tree}
 
 
@@ -19,36 +21,94 @@
 \setkeys{Gin}{width=0.9\textwidth}    %make figures a bit wider than the Sweave default.
 \maketitle
 
-
-
-
-
-
-The following is the R code used to produce a piecewise regression model:
+First read the data:
+\vspace{3mm}
 
 \begin{Schunk}
 \begin{Sinput}
-> piecewise <- function(th, x, y) { # 
-+         X <- cbind( ifelse(x>=th, 1, 0), x, pmax(0, x-th) )
-+         fit = lsfit(X, y) #actually fit the model
-+         
-+         #Counts how many observations lie above and below the breakpoint
-+         upper = as.logical( ifelse(x-th>=0, 1, 0) )
-+         n_upper = sum(upper)
-+         n_lower = dim(X)[1] - n_upper
-+         
-+         #Sum of squared residuals on either side of the breakpoint
-+         ssr_upper = sum( fit$resid[upper]**2 )
-+         ssr_lower = sum( fit$resid[!upper]**2 )
-+         
-+         #Return the residual standard error:
-+         return( n_lower*sqrt(ssr_lower/(n_lower-2)) 
-+             + n_upper*sqrt(ssr_upper/(n_upper-2)) ) }
+> setwd('c:/Users/wrbrooks/git/disco_farms')
+> data_file = 'runoff_by_site.csv'
+> data = read.csv(data_file, header=T, na.strings=c('NA', 'na', ''))
+> farms = levels(data$loc)
+> sites = levels(data$site)
 \end{Sinput}
 \end{Schunk}
 
+\vspace{5mm}
 
-\vspace{10mm}
+The following is the R function that produces a piecewise regression model:
+
+\begin{Schunk}
+\begin{Sinput}
+> piecewise <- function(th, x, y)
++ { 
++     X <- cbind( ifelse(x>=th, 1, 0), x, pmax(0, x-th) )
++     fit = lsfit(X, y) #actually fit the model
++     
++     #Counts how many observations lie above and below the breakpoint
++     upper = as.logical( ifelse(x-th>=0, 1, 0) )
++     n_upper = sum(upper)
++     n_lower = dim(X)[1] - n_upper
++     
++     #Sum of squared residuals on either side of the breakpoint
++     ssr_upper = sum( fit$resid[upper]**2 )
++     ssr_lower = sum( fit$resid[!upper]**2 )
++     
++     #Return the residual standard error:
++     return( n_lower*sqrt(ssr_lower/(n_lower-2)) 
++         + n_upper*sqrt(ssr_upper/(n_upper-2)) )
++ }
+\end{Sinput}
+\end{Schunk}
+
+\newpage
+
+And the next function (\verb+peicewise_plot+) plots the piecewise regression model:
+
+\begin{Schunk}
+\begin{Sinput}
+> piecewise_plot <- function(x,y,th, xlim=FALSE, ylim=FALSE,
++                               xlab='', ylab='', title='')
++ {
++     #define the limits of the plot
++     if( identical(xlim, FALSE) ) { xx = range(x, na.rm=TRUE) }
++     else { xx = xlim }
++ 
++     if( identical(ylim, FALSE) ) { yy = range(y, na.rm=TRUE) }
++     else { yy = ylim }
++     
++     #put the data points on the plot
++     plot(x, y, xlab=xlab, ylab=ylab, xlim=xx, ylim=yy, pch=20,
++            bty='n', xaxt='s', yaxt='s', ann=T, main=title) 
++ 
++     #create the piecewise regression model
++     X <- cbind(ifelse(x>=th, 1, 0), x, pmax(0, x-th))
++     fit = lsfit(X, y) #actually fit the model
++     
++     #extent of the lower, upper pieces:
++     xints = c( xx[1], th, xx[2] )
++ 
++     #draw the lower regression line
++     xints_low = xints[1:2]
++     yints_low = fit$coef[1] + (fit$coef[3]*xints_low)
++     par(new=T, ann=F, xaxt='n', yaxt='n', bty='n')
++     plot(xints_low, yints_low, type='l', xlim=xx, ylim=yy)
++     
++     #draw the upper regression line
++     xints_high = xints[2:3]
++     yints_high = fit$coef[1] + fit$coef[2] + (fit$coef[3]*xints_high) +
++                     (fit$coef[4]*(xints_high - th))
++     par(new=T, ann=F, xaxt='n', yaxt='n')
++     plot(xints_high, yints_high, type='l', xlim=xx, ylim=yy) 
++     
++     #draw a vertical line to separate the two regimes
++     abline(v=th, lty=3) 
++     text(x=th, y=0.6, pos=4, labels=paste("breakpoint: ", round(th,2), sep=""))
++ }
+\end{Sinput}
+\end{Schunk}
+
+\newpage
 We identify the best breakpoint by using R's optimize function to minimize the residual standard error:
 
 \begin{Schunk}
@@ -60,23 +120,79 @@ We identify the best breakpoint by using R's optimize function to minimize the r
 
 
 
-\vspace{10mm}
-First, let us do the soil moisture breakpoint analysis. The breakpoints at each farm individually, and for all farms in aggregate are:
+\vspace{5mm}
+Now, let us do the soil moisture breakpoint analysis. The breakpoints at each farm individually, and for all farms in aggregate are found by the following code (breakpoints are stored in the variable \verb+sm_breakpoints+ for use in plotting [next code chunk]):\\
 
 
 \begin{Schunk}
+\begin{Sinput}
+> xs = seq(33, 43)
+> sm_breakpoints = vector()
+> breakpoints = list()
+> cat("Breakpoints by farm:\n")
+\end{Sinput}
 \begin{Soutput}
-Kp: 35
-P: 35
-Pf: 36
-R: 36
-S: 40
+Breakpoints by farm:
 \end{Soutput}
+\begin{Sinput}
+> for(site in sites)
++ {
++     farm = data[data$site==site,]
++     th <- which.min( sapply(X=xs, FUN=piecewise, x=farm$sm, y=farm$rc) ) + 32
++     #cat(paste(optimize(piecewise, soil_moisture_limits, x=farm$sm, y=farm$rc)$minimum, "\n"))
++     cat( paste(site, ": ", th, "\n", sep=""))
++     sm_breakpoints = c(sm_breakpoints, th)
++     breakpoints[[site]] = th
++ }
+\end{Sinput}
 \begin{Soutput}
-aggregate: 35
+df1: 35
+df3: 35
+df5: 38
+df7: 40
+df8: 38
+koepke: 36
+pagel: 35
+saxon: 38
 \end{Soutput}
+\begin{Sinput}
+> #Now find the breakpoint for aggregated data:
+> aggregate = data[data$site %in% farms,]
+> th <- which.min( sapply(X=xs, FUN=piecewise, x=farm$sm, y=farm$rc) ) + 32
+> cat( paste("aggregate: ", ": ", th, "\n", sep=""))
+\end{Sinput}
+\begin{Soutput}
+aggregate: : 38
+\end{Soutput}
+\begin{Sinput}
+> sm_breakpoints = c(sm_breakpoints, th)
+> breakpoints[["aggregate"]] = th
+\end{Sinput}
 \end{Schunk}
 
+\newpage
+Then the plots are produced by calling the function \verb+piecewise_plot+ (code is listed above):\\
+
+\begin{Schunk}
+\begin{Sinput}
+> layout(matrix(1:8,4,2))
+> titles = c(sites)
+> for( i in 1:length(sites) )
++ {
++     farm = data[data$site==sites[i],]
++     piecewise_plot(x=farm$sm, y=farm$rc, th=sm_breakpoints[i],
++                      ylim=range(data$rc, na.rm=T), xlim=range(data$sm, na.rm=T),
++                      xlab="soil moisture", ylab="runoff coefficient",
++                      title=titles[i])
++ }
+> 
+> #aggregate = data[data$site %in% farms,]
+> #piecewise_plot(x=aggregate$sm, y=aggregate$rc, th=breakpoints[["aggregate"]][i+1],
+> #                 ylim=range(data$rc, na.rm=T), xlim=range(data$sm, na.rm=T),
+> #                 xlab="soil moisture", ylab="runoff coefficient",
+> #                 title="Aggregate")
+\end{Sinput}
+\end{Schunk}
 
 
 \begin{figure}
@@ -87,31 +203,32 @@ aggregate: 35
 \end{figure}
 
 
-\vspace{10mm}
-Now get the I30 breakpoints:
+Now get the I30 breakpoints:\\
 
 \begin{Schunk}
 \begin{Soutput}
-Kp: 0.5
-P: 0.8
-Pf: 0.7
-R: 0.6
-S: 0.9
-\end{Soutput}
-\begin{Soutput}
-aggregate: 0.6
+df1: 0.9
+df3: 0.3
+df5: 0.8
+df7: 0.8
+df8: 1.3
+koepke: 0.7
+pagel: 0.9
+saxon: 0.9
 \end{Soutput}
 \end{Schunk}
 
 
-\vspace{10mm}
-When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the I30 breakpoints (inches of rain per hour):
+When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the I30 breakpoints (units are inches of rain per hour):\\
 
 \begin{Schunk}
 \begin{Soutput}
--Inf <= SM < 30: 1.7
-30 <= SM < 35: 0.5
-35 <= SM < Inf: 0.8
+Intensity breakpoints when binned by soil moisture:
+\end{Soutput}
+\begin{Soutput}
+-Inf <= SM < 33: 1.6
+33 <= SM < 38: 0.9
+38 <= SM < Inf: 0.6
 \end{Soutput}
 \end{Schunk}
 
@@ -125,17 +242,18 @@ When we put the events in bins based on their antecedent soil moisture (SM: high
 \end{figure}
 
 
-\vspace{10mm}
-When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the rain depth breakpoints (inches of rain):
+When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the precipitation breakpoints (units are inches of rain):\\
 
 \begin{Schunk}
 \begin{Soutput}
--Inf <= SM < 30: 1.3
-30 <= SM < 35: 0.94
-35 <= SM < Inf: 0.45
+Precipitation breakpoints when binned by soil moisture:
+\end{Soutput}
+\begin{Soutput}
+-Inf <= SM < 33: 1.03
+33 <= SM < 38: 0.95
+38 <= SM < Inf: 0.73
 \end{Soutput}
 \end{Schunk}
-
 
 
 

@@ -25,10 +25,9 @@ First read the data:
 
 <<label=read_data, echo=True, keep.source=True>>=
 setwd('c:/Users/wrbrooks/git/disco_farms')
-data_file = 'runoff_by_site.csv'
+data_file = 'runoff.csv'
 data = read.csv(data_file, header=T, na.strings=c('NA', 'na', ''))
-farms = levels(data$loc)
-sites = levels(data$site)
+farms = levels(data$farm)
 @
 
 \vspace{5mm}
@@ -118,48 +117,41 @@ Now, let us do the soil moisture breakpoint analysis. The breakpoints at each fa
 <<label=SM_breakpoints, echo=True, keep.source=True>>=
 xs = seq(33, 43)
 sm_breakpoints = vector()
-breakpoints = list()
 cat("Breakpoints by farm:\n")
 
-for(site in sites)
+for(farm_name in farms)
 {
-    farm = data[data$site==site,]
+    farm = data[data$farm==farm_name,]
     th <- which.min( sapply(X=xs, FUN=piecewise, x=farm$sm, y=farm$rc) ) + 32
-    #cat(paste(optimize(piecewise, soil_moisture_limits, x=farm$sm, y=farm$rc)$minimum, "\n"))
-    cat( paste(site, ": ", th, "\n", sep=""))
+    cat( paste(farm_name, ": ", th, "\n", sep=""))
     sm_breakpoints = c(sm_breakpoints, th)
-    breakpoints[[site]] = th
 }
-
-#Now find the breakpoint for aggregated data:
-aggregate = data[data$site %in% farms,]
-th <- which.min( sapply(X=xs, FUN=piecewise, x=farm$sm, y=farm$rc) ) + 32
-cat( paste("aggregate: ", ": ", th, "\n", sep=""))
+ 
+#the soil moisture breakpoint when aggregating all farms:
+th <- which.min( sapply(X=xs, FUN=piecewise, x=data$sm, y=data$rc) ) + 32
 sm_breakpoints = c(sm_breakpoints, th)
-breakpoints[["aggregate"]] = th
+cat( paste("aggregate: ", th, "\n", sep=""))
 @
 
 \newpage
 Then the plots are produced by calling the function \verb+piecewise_plot+ (code is listed above):\\
 
 <<label=sm_plots, echo=True, keep.source=True>>=
-
-layout(matrix(1:8,4,2))
-titles = c(sites)
-for( i in 1:length(sites) )
+layout(matrix(1:6,3,2))
+titles = c(farms, "aggregate")
+for( i in 1:length(farms) )
 {
-    farm = data[data$site==sites[i],]
+    farm = data[data$farm==farms[i],]
     piecewise_plot(x=farm$sm, y=farm$rc, th=sm_breakpoints[i],
                      ylim=range(data$rc, na.rm=T), xlim=range(data$sm, na.rm=T),
                      xlab="soil moisture", ylab="runoff coefficient",
                      title=titles[i])
 }
 
-#aggregate = data[data$site %in% farms,]
-#piecewise_plot(x=aggregate$sm, y=aggregate$rc, th=breakpoints[["aggregate"]][i+1],
-#                 ylim=range(data$rc, na.rm=T), xlim=range(data$sm, na.rm=T),
-#                 xlab="soil moisture", ylab="runoff coefficient",
-#                 title="Aggregate")
+piecewise_plot(x=data$sm, y=data$rc, th=sm_breakpoints[i+1],
+                 ylim=range(data$rc, na.rm=T), xlim=range(data$sm, na.rm=T),
+                 xlab="soil moisture", ylab="runoff coefficient",
+                 title="Aggregate")
 @
 
 
@@ -172,41 +164,39 @@ for( i in 1:length(sites) )
     \caption{caption.\label{sm}}
 \end{figure}
 
-
-Now get the I30 breakpoints:\\
+\begin{comment}
+\vspace{10mm}
+Now get the I30 breakpoints:
 
 <<label=I30_breakpoints, echo=FALSE>>=
-for(site in sites) {
-    farm = data[data$site==site & !is.na(data$I30),]
-    lower_lim = sort( farm$I30 )[4]
-    upper_lim = sort(farm$I30, decreasing=T )[4]
-    #th <- which.min( sapply(X=xs, FUN=piecewise, x=farm$I30, y=farm$rc) ) + 32
-    th <- optimize(piecewise, c(upper_lim, lower_lim), x=farm$I30, y=farm$rc)$minimum
-    cat( paste(site, ": ", round(th,1), "\n", sep="")) }
+for(farm_name in farms) {
+    farm = data[data$farm==farm_name & !is.na(data$p30max),]
+    lower_lim = sort( farm$p30max )[4]
+    upper_lim = sort(farm$p30max, decreasing=T )[4]
+    #th <- which.min( sapply(X=xs, FUN=piecewise, x=farm$p30max, y=farm$rc) ) + 32
+    th <- optimize(piecewise, c(upper_lim, lower_lim), x=farm$p30max, y=farm$rc)$minimum
+    cat( paste(farm_name, ": ", round(th,1), "\n", sep="")) }
  
 #the intensity breakpoint when aggregating all farms:
-#I30 = data[!is.na(data$I30),]
-#lower_lim = sort( I30$I30 )[4]
-#upper_lim = sort(I30$I30, decreasing=T )[4]
-#th <- optimize(piecewise, c(upper_lim, lower_lim), x=I30$I30, y=I30$rc)$minimum
-#cat( paste("aggregate", ": ", round(th,1), "\n", sep=""))
+I30 = data[!is.na(data$p30max),]
+lower_lim = sort( I30$p30max )[4]
+upper_lim = sort(I30$p30max, decreasing=T )[4]
+th <- optimize(piecewise, c(upper_lim, lower_lim), x=I30$p30max, y=I30$rc)$minimum
+cat( paste("aggregate", ": ", round(th,1), "\n", sep=""))
 @
 
 
-When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the I30 breakpoints (units are inches of rain per hour):\\
+\vspace{10mm}
+When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the I30 breakpoints (inches of rain per hour):
 
 <<label=I30_by_binned_SM, echo=False>>=
-limits = c(-Inf, breakpoints[["aggregate"]]-5, breakpoints[["aggregate"]], Inf)
-
+limits=c(-Inf, 30, 35, Inf)
 binned_I30_breakpoints = vector()
-aggregate = data[data$site %in% farms,]
-cat("Intensity breakpoints when binned by soil moisture:\n")
-
 for(i in 1:3) {
-    bin = aggregate[aggregate$sm>=limits[i] & aggregate$sm<limits[i+1] & !is.na(aggregate$I30),]
-    lower_lim = sort( bin$I30 )[4]
-    upper_lim = sort(bin$I30, decreasing=T )[4]
-    th <- optimize(piecewise, c(upper_lim, lower_lim), x=bin$I30, y=bin$rc)$minimum
+    bin = data[data$sm>=limits[i] & data$sm<limits[i+1] & !is.na(data$p30max),]
+    lower_lim = sort( bin$p30max )[4]
+    upper_lim = sort(bin$p30max, decreasing=T )[4]
+    th <- optimize(piecewise, c(upper_lim, lower_lim), x=bin$p30max, y=bin$rc)$minimum
     cat( paste(limits[i], " <= SM < ", limits[i+1], ": ", round(th,1), "\n", sep=""))
     binned_I30_breakpoints = c(binned_I30_breakpoints, th)}
 @
@@ -215,8 +205,8 @@ for(i in 1:3) {
 layout(matrix(1:4,2,2))
 titles = c(paste("SM < ", limits[2], "%", sep=""), paste(limits[2], "% <= SM < ", limits[3], "%", sep=""), paste(limits[3], "% <= SM", sep=""))
 for(i in 1:3) {
-    bin = aggregate[aggregate$sm>=limits[i] & aggregate$sm<limits[i+1] & !is.na(aggregate$I30),]
-    piecewise_plot(x=bin$I30, y=bin$rc, th=binned_I30_breakpoints[i], ylim=range(data$rc, na.rm=T), xlim=range(data$I30, na.rm=T), xlab="I30", ylab="runoff coefficient", title=titles[i]) }
+    bin = data[data$sm>=limits[i] & data$sm<limits[i+1] & !is.na(data$p30max),]
+    piecewise_plot(x=bin$p30max, y=bin$rc, th=binned_I30_breakpoints[i], ylim=range(data$rc, na.rm=T), xlim=range(data$p30max, na.rm=T), xlab="I30", ylab="runoff coefficient", title=titles[i]) }
 @
 
 
@@ -230,18 +220,16 @@ for(i in 1:3) {
 \end{figure}
 
 
-When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the precipitation breakpoints (units are inches of rain):\\
+\vspace{10mm}
+When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the rain depth breakpoints (inches of rain):
 
 <<label=precip_by_binned_SM, include=False, echo=False>>=
 binned_precip_breakpoints = vector()
-aggregate = data[data$site %in% farms,]
-cat("Precipitation breakpoints when binned by soil moisture:\n")
-    
 for(i in 1:3) {
-    bin = aggregate[aggregate$sm>=limits[i] & aggregate$sm<limits[i+1] & !is.na(aggregate$prec),]
-    lower_lim = sort( bin$prec )[4]
-    upper_lim = sort(bin$prec, decreasing=T )[4]
-    th <- optimize(piecewise, c(upper_lim, lower_lim), x=bin$prec, y=bin$rc)$minimum
+    bin = data[data$sm>=limits[i] & data$sm<limits[i+1] & !is.na(data$precip),]
+    lower_lim = sort( bin$precip )[4]
+    upper_lim = sort(bin$precip, decreasing=T )[4]
+    th <- optimize(piecewise, c(upper_lim, lower_lim), x=bin$precip, y=bin$rc)$minimum
     cat( paste(limits[i], " <= SM < ", limits[i+1], ": ", round(th,2), "\n", sep=""))
     binned_precip_breakpoints = c(binned_precip_breakpoints, th)}
 @
@@ -249,12 +237,11 @@ for(i in 1:3) {
 <<label=binned_precip_plots, include=False, echo=False>>=
 layout(matrix(1:4,2,2))
 titles = c(paste("SM < ", limits[2], "%", sep=""), paste(limits[2], "% <= SM < ", limits[3], "%", sep=""), paste(limits[3], "% <= SM", sep=""))
-aggregate = data[data$site %in% farms,]
-
 for(i in 1:3) {
-    bin = aggregate[aggregate$sm>=limits[i] & aggregate$sm<limits[i+1] & !is.na(aggregate$prec),]
-    piecewise_plot(x=bin$prec, y=bin$rc, th=binned_precip_breakpoints[i], ylim=range(data$rc, na.rm=T), xlim=range(data$prec, na.rm=T), xlab="precip", ylab="runoff coefficient", title=titles[i]) }
+    bin = data[data$sm>=limits[i] & data$sm<limits[i+1] & !is.na(data$precip),]
+    piecewise_plot(x=bin$precip, y=bin$rc, th=binned_precip_breakpoints[i], ylim=range(data$rc, na.rm=T), xlim=range(data$precip, na.rm=T), xlab="precip", ylab="runoff coefficient", title=titles[i]) }
 @
+
 
 
 
@@ -266,6 +253,6 @@ for(i in 1:3) {
     \end{center}
     \caption{caption.\label{precip_binned}}
 \end{figure}
-
+\end{comment}
 
 \end{document}
