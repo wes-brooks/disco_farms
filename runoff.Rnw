@@ -27,6 +27,11 @@ First read the data:
 setwd('c:/Users/wrbrooks/git/disco_farms')
 data_file = 'runoff_by_site.csv'
 data = read.csv(data_file, header=T, na.strings=c('NA', 'na', ''))
+#Convert to metric
+data = within(data, {
+    prec <- 2.54*prec
+    I30 <- 2.54*I30
+    })
 farms = levels(data$loc)
 sites = levels(data$site)
 @
@@ -195,7 +200,7 @@ for(site in sites)
 @
 
 
-When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the I30 breakpoints (units are inches of rain per hour):\\
+When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the I30 breakpoints (units are centimeters of rain per hour):\\
 
 <<label=I30_by_binned_SM, echo=False>>=
     binned_I30_breakpoints = list()
@@ -251,7 +256,7 @@ When we put the events in bins based on their antecedent soil moisture (SM: high
 \end{figure}
 
 
-When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the precipitation breakpoints (units are inches of rain):\\
+When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the precipitation breakpoints (units are centimeters of rain):\\
 
 <<label=precip_by_binned_SM, include=False, echo=False>>=
 binned_precip_breakpoints = list()
@@ -362,7 +367,7 @@ Rather than three bins, let's try two (above vs. below the SM breakpoint):\\
 \end{figure}
 
 
-When we put the events in bins based on their antecedent soil moisture (SM: high or low), the following are the precipitation breakpoints (units are inches of rain):\\
+When we put the events in bins based on their antecedent soil moisture (SM: high or low), the following are the precipitation breakpoints (units are centimeters of rain):\\
 
 <<label=precip_by_binned_SM, include=False, echo=False>>=
 binned_precip_breakpoints2 = list()

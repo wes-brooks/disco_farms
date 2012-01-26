@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2012.1.11)  19 JAN 2012 11:31
+This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2012.1.11)  26 JAN 2012 10:52
 entering extended mode
 **C:/Users/wrbrooks/git/disco_farms/runoff.tex
 (C:/Users/wrbrooks/git/disco_farms/runoff.tex
@@ -233,7 +233,7 @@ Package: pst-tree 2009/01/25 package wrapper for pst-tree.tex
 \pstree@stop=\count132
 )
 File: pst-tree.tex 2011/02/28 1.12 `pst-tree' (tvz,hv)
-) (C:/PROGRA~1/R/R-213~1.0/share/texmf/tex/latex\Sweave.sty
+) (C:/PROGRA~1/R/R-214~1.1/share/texmf/tex/latex\Sweave.sty
 Package: Sweave 
 ("C:\Program Files (x86)\MiKTeX 2.8\tex\latex\base\ifthen.sty"
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
@@ -248,7 +248,7 @@ Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix
 \c@FancyVerbLine=\count134
 \FV@StepNumber=\count135
 \FV@OutFile=\write3
-) (C:/PROGRA~1/R/R-213~1.0/share/texmf/tex/latex\upquote.sty
+) (C:/PROGRA~1/R/R-214~1.1/share/texmf/tex/latex\upquote.sty
 Package: upquote 2003/08/11 v1.1 Covington's upright-quote modification to verb
 atim and verb
 ("C:\Program Files (x86)\MiKTeX 2.8\tex\latex\base\textcomp.sty"
@@ -431,7 +431,7 @@ File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 )
 LaTeX Font Info:    Try loading font information for TS1+aett on input line 29.
 
-(C:/PROGRA~1/R/R-213~1.0/share/texmf/tex/latex\ts1aett.fd
+(C:/PROGRA~1/R/R-214~1.1/share/texmf/tex/latex\ts1aett.fd
 File: ts1aett.fd 
 )
 LaTeX Font Info:    Try loading font information for TS1+cmtt on input line 29.
@@ -452,27 +452,27 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!{C:/Users/wrbrooks/AppData/Local/MiKTeX/2.8/pdftex/conf
 ig/pdftex.map}] [2]
-Underfull \hbox (badness 10000) in paragraph at lines 124--125
+Underfull \hbox (badness 10000) in paragraph at lines 129--130
 
  []
 
 [3]
-Underfull \hbox (badness 10000) in paragraph at lines 170--171
+Underfull \hbox (badness 10000) in paragraph at lines 175--176
 
  []
 
 <runoff-sm.pdf, id=16, 505.89pt x 650.43pt>
 File: runoff-sm.pdf Graphic file (type pdf)
 <use runoff-sm.pdf>
-Package pdftex.def Info: runoff-sm.pdf used on input line 196.
+Package pdftex.def Info: runoff-sm.pdf used on input line 201.
 (pdftex.def)             Requested size: 422.77664pt x 543.57854pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 202--203
+Underfull \hbox (badness 10000) in paragraph at lines 207--208
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 218--219
+Underfull \hbox (badness 10000) in paragraph at lines 223--224
 
  []
 
@@ -480,30 +480,30 @@ Underfull \hbox (badness 10000) in paragraph at lines 218--219
 f, id=30, 505.89pt x 578.16pt>
 File: runoff-I30_binned.pdf Graphic file (type pdf)
 <use runoff-I30_binned.pdf>
-Package pdftex.def Info: runoff-I30_binned.pdf used on input line 243.
+Package pdftex.def Info: runoff-I30_binned.pdf used on input line 248.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 249--250
+Underfull \hbox (badness 10000) in paragraph at lines 254--255
 
  []
 
 <runoff-precip_binned.pdf, id=31, 505.89pt x 578.16pt>
 File: runoff-precip_binned.pdf Graphic file (type pdf)
 <use runoff-precip_binned.pdf>
-Package pdftex.def Info: runoff-precip_binned.pdf used on input line 275.
+Package pdftex.def Info: runoff-precip_binned.pdf used on input line 280.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 281--282
+Underfull \hbox (badness 10000) in paragraph at lines 286--287
 
  []
 
 <runoff-I30_binned2.pdf, id=32, 505.89pt x 578.16pt>
 File: runoff-I30_binned2.pdf Graphic file (type pdf)
 <use runoff-I30_binned2.pdf>
-Package pdftex.def Info: runoff-I30_binned2.pdf used on input line 304.
+Package pdftex.def Info: runoff-I30_binned2.pdf used on input line 309.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 310--311
+Underfull \hbox (badness 10000) in paragraph at lines 315--316
 
  []
 
@@ -513,7 +513,7 @@ isco_farms/runoff-I30_binned2.pdf>] <runoff-precip_binned2.pdf, id=67, 505.89pt
  x 578.16pt>
 File: runoff-precip_binned2.pdf Graphic file (type pdf)
 <use runoff-precip_binned2.pdf>
-Package pdftex.def Info: runoff-precip_binned2.pdf used on input line 333.
+Package pdftex.def Info: runoff-precip_binned2.pdf used on input line 338.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
 [10] [11 <C:/Users/wrbrooks/git/disco_farms/runoff-precip_binned2.pdf>] (C:\Use
 rs\wrbrooks\git\disco_farms\runoff.aux) ) 
@@ -531,7 +531,7 @@ iKTeX 2.8/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKT
 eX 2.8/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Program Files (x86)/MiKTeX 
 2.8/fonts/type1/public/amsfonts/cm/cmsltt10.pfb><C:/Program Files (x86)/MiKTeX 
 2.8/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on runoff.pdf (11 pages, 400154 bytes).
+Output written on runoff.pdf (11 pages, 113101 bytes).
 PDF statistics:
  99 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

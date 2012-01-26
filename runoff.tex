@@ -29,6 +29,11 @@ First read the data:
 > setwd('c:/Users/wrbrooks/git/disco_farms')
 > data_file = 'runoff_by_site.csv'
 > data = read.csv(data_file, header=T, na.strings=c('NA', 'na', ''))
+> #Convert to metric
+> data = within(data, {
++     prec <- 2.54*prec
++     I30 <- 2.54*I30
++     })
 > farms = levels(data$loc)
 > sites = levels(data$site)
 \end{Sinput}
@@ -203,36 +208,36 @@ Now get the I30 breakpoints:\\
 
 \begin{Schunk}
 \begin{Soutput}
-df1: 0.9
-df3: 0.3
-df5: 0.8
-df7: 0.8
-df8: 1.3
-koepke: 0.7
-pagel: 0.9
-saxon: 0.9
+df1: 2.3
+df3: 0.7
+df5: 2.2
+df7: 2.1
+df8: 3.3
+koepke: 1.5
+pagel: 2.3
+saxon: 2.1
 \end{Soutput}
 \end{Schunk}
 
 
-When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the I30 breakpoints (units are inches of rain per hour):\\
+When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the I30 breakpoints (units are centimeters of rain per hour):\\
 
 \begin{Schunk}
 \begin{Soutput}
 Intensity breakpoints at koepke when binned by soil moisture:
--Inf <= SM < 31: 1.3
-31 <= SM < 36: 0.7
-36 <= SM < Inf: 0.6
+-Inf <= SM < 31: 3.2
+31 <= SM < 36: 1.8
+36 <= SM < Inf: 1.6
 
 Intensity breakpoints at pagel when binned by soil moisture:
--Inf <= SM < 30: 0.5
-30 <= SM < 35: 0.2
-35 <= SM < Inf: 0.2
+-Inf <= SM < 30: 1.3
+30 <= SM < 35: 0.6
+35 <= SM < Inf: 0.6
 
 Intensity breakpoints at saxon when binned by soil moisture:
--Inf <= SM < 33: 1.2
-33 <= SM < 38: 0.6
-38 <= SM < Inf: 0.9
+-Inf <= SM < 33: 3
+33 <= SM < 38: 1.5
+38 <= SM < Inf: 2
 \end{Soutput}
 \end{Schunk}
 
@@ -246,24 +251,24 @@ Intensity breakpoints at saxon when binned by soil moisture:
 \end{figure}
 
 
-When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the precipitation breakpoints (units are inches of rain):\\
+When we put the events in bins based on their antecedent soil moisture (SM: high, medium, and low), the following are the precipitation breakpoints (units are centimeters of rain):\\
 
 \begin{Schunk}
 \begin{Soutput}
 Precipitation breakpoints at koepke when binned by soil moisture:
--Inf <= SM < 31: 1.22
-31 <= SM < 36: 0.69
-36 <= SM < Inf: 0.58
+-Inf <= SM < 31: 2.84
+31 <= SM < 36: 1.79
+36 <= SM < Inf: 1.47
 
 Precipitation breakpoints at pagel when binned by soil moisture:
--Inf <= SM < 30: 1.03
-30 <= SM < 35: 0.46
-35 <= SM < Inf: 0.85
+-Inf <= SM < 30: 2.63
+30 <= SM < 35: 1.17
+35 <= SM < Inf: 2.03
 
 Precipitation breakpoints at saxon when binned by soil moisture:
--Inf <= SM < 33: 1.01
-33 <= SM < 38: 0.48
-38 <= SM < Inf: 0.72
+-Inf <= SM < 33: 2.51
+33 <= SM < 38: 1.23
+38 <= SM < Inf: 1.97
 \end{Soutput}
 \end{Schunk}
 
@@ -284,16 +289,16 @@ Rather than three bins, let's try two (above vs. below the SM breakpoint):\\
 \begin{Schunk}
 \begin{Soutput}
 Intensity breakpoints at koepke when binned by soil moisture:
--Inf <= SM < 31: 0.7
-31 <= SM < 36: 0.6
+-Inf <= SM < 31: 1.6
+31 <= SM < 36: 1.6
 
 Intensity breakpoints at pagel when binned by soil moisture:
--Inf <= SM < 30: 0.5
-30 <= SM < 35: 0.2
+-Inf <= SM < 30: 1.3
+30 <= SM < 35: 0.6
 
 Intensity breakpoints at saxon when binned by soil moisture:
--Inf <= SM < 33: 0.7
-33 <= SM < 38: 0.9
+-Inf <= SM < 33: 1.7
+33 <= SM < 38: 2
 \end{Soutput}
 \end{Schunk}
 
@@ -307,21 +312,21 @@ Intensity breakpoints at saxon when binned by soil moisture:
 \end{figure}
 
 
-When we put the events in bins based on their antecedent soil moisture (SM: high or low), the following are the precipitation breakpoints (units are inches of rain):\\
+When we put the events in bins based on their antecedent soil moisture (SM: high or low), the following are the precipitation breakpoints (units are centimeters of rain):\\
 
 \begin{Schunk}
 \begin{Soutput}
 Precipitation breakpoints at koepke when binned by soil moisture:
--Inf <= SM < 36: 0.76
-36 <= SM < Inf: 0.58
+-Inf <= SM < 36: 1.92
+36 <= SM < Inf: 1.47
 
 Precipitation breakpoints at pagel when binned by soil moisture:
--Inf <= SM < 35: 1.03
-35 <= SM < Inf: 0.85
+-Inf <= SM < 35: 2.62
+35 <= SM < Inf: 2.03
 
 Precipitation breakpoints at saxon when binned by soil moisture:
--Inf <= SM < 38: 0.82
-38 <= SM < Inf: 0.72
+-Inf <= SM < 38: 2.05
+38 <= SM < Inf: 1.97
 \end{Soutput}
 \end{Schunk}
 
