@@ -460,7 +460,7 @@ layout(t(matrix(1:6,2,3)))
 
 
 <<eval=false>>=
-    anova.bp <- function(data, split.on, site=NA, loc=NA, conts=FALSE, discrete.xrange=FALSE, xrange=NA, min.in.node=4)
+    anova.bp <- function(data, split.on, site=NA, conts=FALSE, discrete.xrange=FALSE, xrange=NA, min.in.node=4, return.models=FALSE, return.X=FALSE)
     {       
         if(!conts)
         {
@@ -473,7 +473,7 @@ layout(t(matrix(1:6,2,3)))
                 th <- optimize(piecewise_disjoint, upper=upper_lim, lower=lower_lim, x=data[data$site==site,split.on], y=data[data$site==site,]$rc)$minimum
             }
         
-            X.bp = cbind( ifelse(data[data$site==site,split.on]>=th, 1, 0), data[data$site==site,split.on], max(0, data[data$site==site,split.on]-th) )
+            X.bp = cbind( ifelse(data[data$site==site,split.on]>=th, 1, 0), data[data$site==site,split.on], pmax(0, data[data$site==site,split.on]-th) )
         }
         else
         {
@@ -486,14 +486,20 @@ layout(t(matrix(1:6,2,3)))
                 th <- optimize(piecewise_conts, upper=upper_lim, lower=lower_lim, x=data[data$site==site,split.on], y=data[data$site==site,]$rc)$minimum
             }
         
-            X.bp = cbind( data[data$site==site,split.on], max(0, data[data$site==site,split.on]-th) )   
+            X.bp = cbind( data[data$site==site,split.on], pmax(0, data[data$site==site,split.on]-th) )   
         }
             
         X.line = data[data$site==site,split.on]
         y = data[data$site==site,]$rc
        
-        fit.bp = lsfit(x=X.bp, y=y)
-        fit.line = lsfit(x=X.line, y=y)
+        if(return.X)
+            return(list(line=X.line, bp=X.bp, theta=th))
+        
+        fit.bp = lm(y~X.bp)
+        fit.line = lm(y~X.line)
+        
+        if(return.models)
+            return(list(bp=fit.bp, line=fit.line, theta=th))
         
         cat(paste("theta= ", th, "\n", sep=""))
         
