@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2012.1.11)  15 MAR 2012 18:54
+This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2012.1.11)  15 MAR 2012 19:58
 entering extended mode
 **C:/Users/wrbrooks/git/disco_farms/runoff.tex
 (C:/Users/wrbrooks/git/disco_farms/runoff.tex
@@ -428,20 +428,7 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 LaTeX Font Info:    Try loading font information for T1+aett on input line 28.
 ("C:\Program Files (x86)\MiKTeX 2.8\tex\latex\ae\t1aett.fd"
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
-)
-LaTeX Font Info:    Try loading font information for TS1+aett on input line 29.
-
-(C:/PROGRA~1/R/R-214~1.1/share/texmf/tex/latex\ts1aett.fd
-File: ts1aett.fd 
-)
-LaTeX Font Info:    Try loading font information for TS1+cmtt on input line 29.
-
-("C:\Program Files (x86)\MiKTeX 2.8\tex\latex\base\ts1cmtt.fd"
-File: ts1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `TS1/aett/m/sl' in size <12> not available
-(Font)              Font shape `TS1/cmtt/m/sl' tried instead on input line 29.
-[1
+) [1
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -451,89 +438,88 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!{C:/Users/wrbrooks/AppData/Local/MiKTeX/2.8/pdftex/conf
-ig/pdftex.map}] [2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 174--175
+ig/pdftex.map}] [2]
+Underfull \hbox (badness 10000) in paragraph at lines 56--57
 
  []
 
-[4] [5]
-Underfull \hbox (badness 10000) in paragraph at lines 225--226
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 76--77
 
  []
 
-<runoff-sm.pdf, id=22, 505.89pt x 650.43pt>
+<runoff-sm.pdf, id=15, 505.89pt x 650.43pt>
 File: runoff-sm.pdf Graphic file (type pdf)
 <use runoff-sm.pdf>
-Package pdftex.def Info: runoff-sm.pdf used on input line 251.
+Package pdftex.def Info: runoff-sm.pdf used on input line 82.
 (pdftex.def)             Requested size: 422.77664pt x 543.57854pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
+Underfull \hbox (badness 10000) in paragraph at lines 88--89
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 273--274
+Underfull \hbox (badness 10000) in paragraph at lines 104--105
 
  []
 
-[6] [7 <C:/Users/wrbrooks/git/disco_farms/runoff-sm.pdf>] <runoff-I30_binned.pd
-f, id=37, 505.89pt x 578.16pt>
+<runoff-I30_binned.pdf, id=16, 505.89pt x 578.16pt>
 File: runoff-I30_binned.pdf Graphic file (type pdf)
 <use runoff-I30_binned.pdf>
-Package pdftex.def Info: runoff-I30_binned.pdf used on input line 298.
+Package pdftex.def Info: runoff-I30_binned.pdf used on input line 129.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 304--305
+Underfull \hbox (badness 10000) in paragraph at lines 135--136
 
  []
 
-<runoff-precip_binned.pdf, id=38, 505.89pt x 578.16pt>
+[4] [5 <C:/Users/wrbrooks/git/disco_farms/runoff-sm.pdf>] [6 <C:/Users/wrbrooks
+/git/disco_farms/runoff-I30_binned.pdf>] <runoff-precip_binned.pdf, id=40, 505.
+89pt x 578.16pt>
 File: runoff-precip_binned.pdf Graphic file (type pdf)
 <use runoff-precip_binned.pdf>
-Package pdftex.def Info: runoff-precip_binned.pdf used on input line 330.
+Package pdftex.def Info: runoff-precip_binned.pdf used on input line 161.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 336--337
+Underfull \hbox (badness 10000) in paragraph at lines 167--168
 
  []
 
-<runoff-I30_binned2.pdf, id=39, 505.89pt x 578.16pt>
+<runoff-I30_binned2.pdf, id=41, 505.89pt x 578.16pt>
 File: runoff-I30_binned2.pdf Graphic file (type pdf)
 <use runoff-I30_binned2.pdf>
-Package pdftex.def Info: runoff-I30_binned2.pdf used on input line 359.
+Package pdftex.def Info: runoff-I30_binned2.pdf used on input line 190.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 365--366
+Underfull \hbox (badness 10000) in paragraph at lines 196--197
 
  []
 
-[8] [9 <C:/Users/wrbrooks/git/disco_farms/runoff-I30_binned.pdf>] [10 <C:/Users
-/wrbrooks/git/disco_farms/runoff-precip_binned.pdf>] [11 <C:/Users/wrbrooks/git
-/disco_farms/runoff-I30_binned2.pdf>] [12] <runoff-precip_binned2.pdf, id=76, 5
-05.89pt x 578.16pt>
+[7] [8 <C:/Users/wrbrooks/git/disco_farms/runoff-precip_binned.pdf>] [9 <C:/Use
+rs/wrbrooks/git/disco_farms/runoff-I30_binned2.pdf>] <runoff-precip_binned2.pdf
+, id=66, 505.89pt x 578.16pt>
 File: runoff-precip_binned2.pdf Graphic file (type pdf)
 <use runoff-precip_binned2.pdf>
-Package pdftex.def Info: runoff-precip_binned2.pdf used on input line 435.
+Package pdftex.def Info: runoff-precip_binned2.pdf used on input line 272.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
-[13] [14 <C:/Users/wrbrooks/git/disco_farms/runoff-precip_binned2.pdf>] (C:\Use
+[10] [11 <C:/Users/wrbrooks/git/disco_farms/runoff-precip_binned2.pdf>] (C:\Use
 rs\wrbrooks\git\disco_farms\runoff.aux) ) 
 Here is how much of TeX's memory you used:
- 7053 strings out of 495285
- 101760 string characters out of 3180048
- 190835 words of memory out of 3000000
- 10131 multiletter control sequences out of 15000+200000
- 17579 words of font info for 49 fonts, out of 3000000 for 9000
+ 7027 strings out of 495285
+ 101036 string characters out of 3180048
+ 190833 words of memory out of 3000000
+ 10112 multiletter control sequences out of 15000+200000
+ 17281 words of font info for 48 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
  44i,6n,73p,576b,334s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\wrbrooks\AppData\Local\MiKT
-eX\2.8\fonts\pk\ljfour\jknappen\ec\dpi600\tcst1200.pk><C:/Program Files (x86)/M
-iKTeX 2.8/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKT
-eX 2.8/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Program Files (x86)/MiKTeX 
-2.8/fonts/type1/public/amsfonts/cm/cmsltt10.pfb><C:/Program Files (x86)/MiKTeX 
-2.8/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on runoff.pdf (14 pages, 118273 bytes).
+<C:/Program Files (x86)/MiKTeX 2.8/fon
+ts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKTeX 2.8/fonts/
+type1/public/amsfonts/cm/cmr17.pfb><C:/Program Files (x86)/MiKTeX 2.8/fonts/typ
+e1/public/amsfonts/cm/cmsltt10.pfb><C:/Program Files (x86)/MiKTeX 2.8/fonts/typ
+e1/public/amsfonts/cm/cmtt12.pfb>
+Output written on runoff.pdf (11 pages, 111247 bytes).
 PDF statistics:
- 109 PDF objects out of 1000 (max. 8388607)
+ 94 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

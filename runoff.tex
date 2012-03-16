@@ -25,138 +25,20 @@ First read the data:
 \vspace{3mm}
 
 \begin{Schunk}
-\begin{Sinput}
-> setwd('c:/Users/wrbrooks/git/disco_farms')
-> data_file = 'runoff_by_site.csv'
-> data = read.csv(data_file, header=T, na.strings=c('NA', 'na', '', "-9"))
-> #Remove NAs:
-> which(is.na(data)) %% dim(data)[1]
-\end{Sinput}
 \begin{Soutput}
 [1] 831
 \end{Soutput}
-\begin{Sinput}
-> data = data[-831,]
-> #Convert to metric
-> data = within(data, {
-+     prec <- 2.54*prec
-+     I30 <- 2.54*I30
-+     })
-> farms = levels(data$loc)
-> sites = levels(data$site)
-\end{Sinput}
 \end{Schunk}
 
 \vspace{5mm}
 
 The following is the R function that produces a piecewise regression model:
 
-\begin{Schunk}
-\begin{Sinput}
-> piecewise <- function(th, x, y)
-+ { 
-+     X <- cbind( ifelse(x>=th, 1, 0), x, pmax(0, x-th) )
-+     #X <- cbind( x, pmax(0, x-th) )
-+     fit = lsfit(X, y) #actually fit the model
-+     
-+     #Counts how many observations lie above and below the breakpoint
-+     upper = as.logical( ifelse(x-th>=0, 1, 0) )
-+     n_upper = sum(upper)
-+     n_lower = dim(X)[1] - n_upper
-+     
-+     #Sum of squared residuals on either side of the breakpoint
-+     ssr_upper = sum( fit$resid[upper]**2 )
-+     ssr_lower = sum( fit$resid[!upper]**2 )
-+     
-+     #Return the residual standard error:
-+     return( n_lower*sqrt(ssr_lower/(n_lower-2)) + n_upper*sqrt(ssr_upper/(n_upper-2)) )
-+ }
-> piecewise_conts <- function(th, x, y)
-+ { 
-+     X <- cbind( x, pmax(0, x-th) )
-+     fit = lsfit(X, y) #actually fit the model
-+     
-+     #Counts how many observations lie above and below the breakpoint
-+     upper = as.logical( ifelse(x-th>=0, 1, 0) )
-+     n_upper = sum(upper)
-+     n_lower = dim(X)[1] - n_upper
-+     
-+     #Sum of squared residuals on either side of the breakpoint
-+     ssr_upper = sum( fit$resid[upper]**2 )
-+     ssr_lower = sum( fit$resid[!upper]**2 )
-+     
-+     #Return the residual standard error:
-+     return( n_lower*sqrt(ssr_lower/(n_lower-2)) + n_upper*sqrt(ssr_upper/(n_upper-2)) )
-+ }
-> piecewise_disjoint <- function(th, x, y)
-+ { 
-+     X <- cbind( ifelse(x>=th, 1, 0), x, pmax(0, x-th) )
-+     fit = lsfit(X, y) #actually fit the model
-+     
-+     #Counts how many observations lie above and below the breakpoint
-+     upper = as.logical( ifelse(x-th>=0, 1, 0) )
-+     n_upper = sum(upper)
-+     n_lower = dim(X)[1] - n_upper
-+     
-+     #Sum of squared residuals on either side of the breakpoint
-+     ssr_upper = sum( fit$resid[upper]**2 )
-+     ssr_lower = sum( fit$resid[!upper]**2 )
-+     
-+     #Return the residual standard error:
-+     return( n_lower*sqrt(ssr_lower/(n_lower-2)) + n_upper*sqrt(ssr_upper/(n_upper-2)) )
-+ }
-\end{Sinput}
-\end{Schunk}
 
 \newpage
 
 And the next function (\verb+peicewise_plot+) plots the piecewise regression model:
 
-\begin{Schunk}
-\begin{Sinput}
-> piecewise_plot <- function(x,y,th, xlim=FALSE, ylim=FALSE,
-+                               xlab='', ylab='', title='')
-+ {
-+     #define the limits of the plot
-+     if( identical(xlim, FALSE) ) { xx = range(x, na.rm=TRUE) }
-+     else { xx = xlim }
-+ 
-+     if( identical(ylim, FALSE) ) { yy = range(y, na.rm=TRUE) }
-+     else { yy = ylim }
-+     
-+     #put the data points on the plot
-+     plot(x, y, xlab=xlab, ylab=ylab, xlim=xx, ylim=yy, pch=20,
-+            bty='n', xaxt='s', yaxt='s', ann=T, main=title) 
-+ 
-+     #create the piecewise regression model
-+     X <- cbind(ifelse(x>=th, 1, 0), x, pmax(0, x-th))
-+     #X <- cbind( x, pmax(0, x-th))
-+     fit = lsfit(X, y) #actually fit the model
-+     
-+     #extent of the lower, upper pieces:
-+     xints = c( xx[1], th, xx[2] )
-+ 
-+     #draw the lower regression line
-+     xints_low = xints[1:2]
-+     yints_low = fit$coef[1] + (fit$coef[3]*xints_low)
-+     #yints_low = fit$coef[1] + (fit$coef[2]*xints_low)
-+     par(new=T, ann=F, xaxt='n', yaxt='n', bty='n')
-+     plot(xints_low, yints_low, type='l', xlim=xx, ylim=yy)
-+     
-+     #draw the upper regression line
-+     xints_high = xints[2:3]
-+     yints_high = fit$coef[1] + fit$coef[2] + (fit$coef[3]*xints_high) +
-+                     (fit$coef[4]*(xints_high - th))
-+     #yints_high = fit$coef[1] + (fit$coef[2]*xints_high) + (fit$coef[3]*(xints_high - th))
-+     par(new=T, ann=F, xaxt='n', yaxt='n')
-+     plot(xints_high, yints_high, type='l', xlim=xx, ylim=yy) 
-+     
-+     #draw a vertical line to separate the two regimes
-+     abline(v=th, lty=3) 
-+     text(x=th, y=0.6, pos=4, labels=paste("breakpoint: ", round(th,2), sep=""))
-+ }
-\end{Sinput}
-\end{Schunk}
 
 \newpage
 We identify the best breakpoint by using R's optimize function to minimize the residual standard error:
@@ -175,31 +57,9 @@ Now, let us do the soil moisture breakpoint analysis. The breakpoints at each fa
 
 
 \begin{Schunk}
-\begin{Sinput}
-> xs = seq(33, 43)
-> sm_breakpoints = vector()
-> breakpoints = list()
-> cat("Breakpoints by farm:\n")
-\end{Sinput}
 \begin{Soutput}
 Breakpoints by farm:
 \end{Soutput}
-\begin{Sinput}
-> fit = list()
-> for(site in sites)
-+ {
-+     farm = data[data$site==site,]
-+     th <- which.min( sapply(X=xs, FUN=piecewise, x=farm$sm, y=farm$rc) ) + 32
-+     #cat(paste(optimize(piecewise, soil_moisture_limits, x=farm$sm, y=farm$rc)$minimum, "\n"))
-+     cat( paste(site, ": ", th, "\n", sep=""))
-+     sm_breakpoints = c(sm_breakpoints, th)
-+     breakpoints[[site]] = th
-+     
-+     X <- cbind( ifelse(farm$sm>=th, 1, 0), farm$sm, pmax(0, farm$sm-th) )
-+     #X <- cbind( x, pmax(0, x-th) )    
-+     fit[[site]] = lsfit(x=X, y=farm$rc)
-+ }
-\end{Sinput}
 \begin{Soutput}
 df1: 35
 df3: 35
@@ -210,40 +70,11 @@ koepke: 35
 pagel: 35
 saxon: 40
 \end{Soutput}
-\begin{Sinput}
-> 
-> #Now find the breakpoint for aggregated data:
-> #aggregate = data[data$site %in% farms,]
-> #th <- which.min( sapply(X=xs, FUN=piecewise, x=farm$sm, y=farm$rc) ) + 32
-> #cat( paste("aggregate: ", ": ", th, "\n", sep=""))
-> #sm_breakpoints = c(sm_breakpoints, th)
-> #breakpoints[["aggregate"]] = th
-\end{Sinput}
 \end{Schunk}
 
 \newpage
 Then the plots are produced by calling the function \verb+piecewise_plot+ (code is listed above):\\
 
-\begin{Schunk}
-\begin{Sinput}
-> layout(matrix(1:8,4,2))
-> titles = c(sites)
-> for( i in 1:length(sites) )
-+ {
-+     farm = data[data$site==sites[i],]
-+     piecewise_plot(x=farm$sm, y=farm$rc, th=sm_breakpoints[i],
-+                      ylim=range(data$rc, na.rm=T), xlim=range(data$sm, na.rm=T),
-+                      xlab="soil moisture", ylab="runoff coefficient",
-+                      title=titles[i])
-+ }
-> 
-> #aggregate = data[data$site %in% farms,]
-> #piecewise_plot(x=aggregate$sm, y=aggregate$rc, th=breakpoints[["aggregate"]][i+1],
-> #                 ylim=range(data$rc, na.rm=T), xlim=range(data$sm, na.rm=T),
-> #                 xlab="soil moisture", ylab="runoff coefficient",
-> #                 title="Aggregate")
-\end{Sinput}
-\end{Schunk}
 
 
 \begin{figure}
@@ -275,17 +106,17 @@ When we put the events in bins based on their antecedent soil moisture (SM: high
 \begin{Schunk}
 \begin{Soutput}
 Intensity breakpoints at koepke when binned by soil moisture:
--Inf <= SM < 30: 3.3
+0 <= SM < 30: 3.3
 30 <= SM < 35: 1.8
 35 <= SM < Inf: 1.6
 
 Intensity breakpoints at pagel when binned by soil moisture:
--Inf <= SM < 30: 1.3
+0 <= SM < 30: 1.3
 30 <= SM < 35: 0.6
 35 <= SM < Inf: 0.6
 
 Intensity breakpoints at saxon when binned by soil moisture:
--Inf <= SM < 35: 1.8
+0 <= SM < 35: 1.8
 35 <= SM < 40: 1.2
 40 <= SM < Inf: 2
 \end{Soutput}
@@ -306,17 +137,17 @@ When we put the events in bins based on their antecedent soil moisture (SM: high
 \begin{Schunk}
 \begin{Soutput}
 Precipitation breakpoints at koepke when binned by soil moisture:
--Inf <= SM < 30: 2.8
+0 <= SM < 30: 2.8
 30 <= SM < 35: 1.72
 35 <= SM < Inf: 1.58
 
 Precipitation breakpoints at pagel when binned by soil moisture:
--Inf <= SM < 30: 2.63
+0 <= SM < 30: 2.63
 30 <= SM < 35: 1.17
 35 <= SM < Inf: 2.03
 
 Precipitation breakpoints at saxon when binned by soil moisture:
--Inf <= SM < 35: 2.51
+0 <= SM < 35: 2.51
 35 <= SM < 40: 1.18
 40 <= SM < Inf: 2.26
 \end{Soutput}
@@ -384,7 +215,7 @@ Precipitation breakpoints at saxon when binned by soil moisture:
 
 \begin{Schunk}
 \begin{Sinput}
->     anova.bp <- function(data, split.on, site=NA, loc=NA, conts=FALSE, discrete.xrange=FALSE, xrange=NA)
+>     anova.bp <- function(data, split.on, site=NA, conts=FALSE, discrete.xrange=FALSE, xrange=NA, min.in.node=4, return.models=FALSE, return.X=FALSE)
 +     {       
 +         if(!conts)
 +         {
@@ -392,12 +223,12 @@ Precipitation breakpoints at saxon when binned by soil moisture:
 +                 th <- which.min( sapply(X=xrange, FUN=piecewise_disjoint, x=data[data$site==site,split.on], y=data[data$site==site,]$rc) ) + xrange[1]-1
 +             else
 +             {
-+                 lower_lim = sort( data[data$site==site,split.on] )[4]
-+                 upper_lim = sort(data[data$site==site,split.on], decreasing=T )[4]
++                 lower_lim = sort( data[data$site==site,split.on] )[min.in.node]
++                 upper_lim = sort(data[data$site==site,split.on], decreasing=T )[min.in.node]
 +                 th <- optimize(piecewise_disjoint, upper=upper_lim, lower=lower_lim, x=data[data$site==site,split.on], y=data[data$site==site,]$rc)$minimum
 +             }
 +         
-+             X.bp = cbind( ifelse(data[data$site==site,split.on]>=th, 1, 0), data[data$site==site,split.on], max(0, data[data$site==site,split.on]-th) )
++             X.bp = cbind( ifelse(data[data$site==site,split.on]>=th, 1, 0), data[data$site==site,split.on], pmax(0, data[data$site==site,split.on]-th) )
 +         }
 +         else
 +         {
@@ -405,19 +236,25 @@ Precipitation breakpoints at saxon when binned by soil moisture:
 +                 th <- which.min( sapply(X=xrange, FUN=piecewise_conts, x=data[data$site==site,split.on], y=data[data$site==site,]$rc) ) + xrange[1]-1
 +             else
 +             {
-+                 lower_lim = sort( data[data$site==site,split.on] )[4]
-+                 upper_lim = sort(data[data$site==site,split.on], decreasing=T )[4]
++                 lower_lim = sort( data[data$site==site,split.on] )[min.in.node]
++                 upper_lim = sort(data[data$site==site,split.on], decreasing=T )[min.in.node]
 +                 th <- optimize(piecewise_conts, upper=upper_lim, lower=lower_lim, x=data[data$site==site,split.on], y=data[data$site==site,]$rc)$minimum
 +             }
 +         
-+             X.bp = cbind( data[data$site==site,split.on], max(0, data[data$site==site,split.on]-th) )   
++             X.bp = cbind( data[data$site==site,split.on], pmax(0, data[data$site==site,split.on]-th) )   
 +         }
 +             
 +         X.line = data[data$site==site,split.on]
 +         y = data[data$site==site,]$rc
 +        
-+         fit.bp = lsfit(x=X.bp, y=y)
-+         fit.line = lsfit(x=X.line, y=y)
++         if(return.X)
++             return(list(line=X.line, bp=X.bp, theta=th))
++         
++         fit.bp = lm(y~X.bp)
++         fit.line = lm(y~X.line)
++         
++         if(return.models)
++             return(list(bp=fit.bp, line=fit.line, theta=th))
 +         
 +         cat(paste("theta= ", th, "\n", sep=""))
 +         
