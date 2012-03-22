@@ -91,7 +91,7 @@
         #Counts how many observations lie above and below the breakpoint
         upper = as.logical( ifelse(x-th>=0, 1, 0) )
         n_upper = sum(upper)
-        n_lower = dim(X)[1] - n_upper
+        n_lower = length(X) - n_upper
     
         #Sum of squared residuals on either side of the breakpoint
         ssr_upper = sum( fit$resid[upper]**2 )
@@ -103,12 +103,12 @@
 @
 
 <<echo=False, include=False>>=
-    anova.bp <- function(data, split.on, site=NA, conts=FALSE, discrete.xrange=FALSE, xrange=NA, min.in.node=4, return.models=FALSE, return.X=FALSE) {         
+    anova.bp <- function(data, split.on, site=NA, conts=FALSE, const=FALSE, discrete.xrange=FALSE, xrange=NA, min.in.node=4, return.models=FALSE, return.X=FALSE) {         
         #First, remove datapoints that have NA for the splitting variable:
         data = data[!is.na(data[,split.on]),]
         
         #Now generate the matrix of predictors (i.e. the X matrix):
-        if(!conts) {
+        if(!conts & !const) {
             if(discrete.xrange)
                 th <- which.min( sapply(X=xrange, FUN=piecewise_disjoint, x=data[data$site==site,split.on], y=data[data$site==site,]$rc) ) + xrange[1]-1
             else {
@@ -118,8 +118,9 @@
             }
         
             X.bp = cbind( ifelse(data[data$site==site,split.on]>=th, 1, 0), data[data$site==site,split.on], pmax(0, data[data$site==site,split.on]-th) )
+            X.line = data[data$site==site,split.on]
         }
-        else {
+        else if (!const) {
             if(discrete.xrange)
                 th <- which.min( sapply(X=xrange, FUN=piecewise_conts, x=data[data$site==site,split.on], y=data[data$site==site,]$rc) ) + xrange[1]-1
             else {
@@ -129,9 +130,21 @@
             }
         
             X.bp = cbind( data[data$site==site,split.on], pmax(0, data[data$site==site,split.on]-th) )   
+            X.line = data[data$site==site,split.on]
         }
-            
-        X.line = data[data$site==site,split.on]
+        else {
+            if(discrete.xrange)
+                th <- which.min( sapply(X=xrange, FUN=piecewise_constant, x=data[data$site==site,split.on], y=data[data$site==site,]$rc) ) + xrange[1]-1
+            else {
+                lower_lim = sort( data[data$site==site,split.on] )[min.in.node]
+                upper_lim = sort(data[data$site==site,split.on], decreasing=T )[min.in.node]
+                th <- optimize(piecewise_constant, upper=upper_lim, lower=lower_lim, x=data[data$site==site,split.on], y=data[data$site==site,]$rc)$minimum
+            }
+        
+            X.bp = ifelse(data[data$site==site,split.on]>=th, 1, 0)
+            X.line = rep(1, dim(data[data$site==site,])[1])
+        }
+        
         y = data[data$site==site,]$rc
        
         if(return.X)
@@ -156,7 +169,7 @@
 
 
 <<label=piecewise_plot, include=False, echo=FALSE, keep.source=True>>=
-    piecewise_plot <- function(x,y,th, xlim=FALSE, ylim=FALSE, xlab='', ylab='', title='', p=1) {
+    piecewise_plot <- function(x,y,th, xlim=FALSE, ylim=FALSE, xlab='', ylab='', title='', p=1, fit='') {
         #define the limits of the plot
         if( identical(xlim, FALSE) ) { xx = range(x, na.rm=TRUE) }
         else { xx = xlim }
@@ -168,21 +181,21 @@
         plot(x, y, xlab=xlab, ylab=ylab, xlim=xx, ylim=yy, pch=20, bty='n', xaxt='s', yaxt='s', ann=T, main=title) 
     
         #create the piecewise regression model
-        X <- cbind(ifelse(x>=th, 1, 0), x, pmax(0, x-th))
-        fit = lsfit(X, y) #actually fit the model
+        #X <- cbind(ifelse(x>=th, 1, 0), x, pmax(0, x-th))
+        #fit = lm(y~X) #actually fit the model
     
         #extent of the lower, upper pieces:
         xints = c( xx[1], th, xx[2] )
 
         #draw the lower regression line
         xints_low = xints[1:2]
-        yints_low = fit$coef[1] + (fit$coef[3]*xints_low)
+        yints_low = rep(fit$coef[["(Intercept)"]], 2)
         par(new=T, ann=F, xaxt='n', yaxt='n', bty='n')
         plot(xints_low, yints_low, type='l', xlim=xx, ylim=yy)
     
         #draw the upper regression line
         xints_high = xints[2:3]
-        yints_high = fit$coef[1] + fit$coef[2] + (fit$coef[3]*xints_high) + (fit$coef[4]*(xints_high - th))
+        yints_high = rep(fit$coef[["(Intercept)"]] + fit$coef[["X.bp"]], 2)
         par(new=T, ann=F, xaxt='n', yaxt='n')
         plot(xints_high, yints_high, type='l', xlim=xx, ylim=yy) 
     
@@ -199,19 +212,18 @@ The piecewise models we use here allow a seaparate slope and intercept on either
     sm.breakpoints = vector()
     sm.pval = list()
     breakpoints = list()
-    fit = list()
+    fit.sm = list()
     cat("Soil moisture breakpoints by farm:\n")
 
     for(site in sites) {
         farm = data[data$site==site,]
-        th <- which.min( sapply(X=xs, FUN=piecewise, x=farm$sm, y=farm$rc) ) + 32
+        th <- which.min( sapply(X=xs, FUN=piecewise_constant, x=farm$sm, y=farm$rc) ) + 32
     
         sm.breakpoints = c(sm.breakpoints, th)
         breakpoints[[site]] = th
-        sm.pval[[site]] = anova.bp(data, split.on="sm", site=site, discrete.xrange=TRUE, xrange=xs, min.in.node=4)
+        sm.pval[[site]] = anova.bp(data, split.on="sm", site=site, discrete.xrange=TRUE, xrange=xs, min.in.node=4, const=TRUE)
         
-        X <- cbind( ifelse(farm$sm>=th, 1, 0), farm$sm, pmax(0, farm$sm-th) )
-        fit[[site]] = lsfit(x=X, y=farm$rc)
+        fit.sm[[site]] = anova.bp(data, split.on="sm", site=site, discrete.xrange=TRUE, xrange=xs, min.in.node=4, const=TRUE, return.models=TRUE)[["bp"]]
         cat( paste(site, ": ", th, "; ", sm.pval[[site]], "\n", sep=""))
     }
 @
@@ -226,7 +238,8 @@ The piecewise models we use here allow a seaparate slope and intercept on either
                          ylim=range(data$rc, na.rm=T), xlim=range(data$sm, na.rm=T),
                          xlab="soil moisture", ylab="runoff coefficient",
                          title=farm_names[[sites[i]]],
-                         p=sm.pval[[sites[i]]])
+                         p=sm.pval[[sites[i]]],
+                         fit=fit.sm[[sites[i]]] )
     }
 @
 
@@ -251,8 +264,8 @@ Now get the I30 breakpoints:\\
         farm = data[data$site==site & !is.na(data$I30),]
         lower_lim = sort( farm$I30 )[4]
         upper_lim = sort(farm$I30, decreasing=T )[4]
-        th <- optimize(piecewise, c(upper_lim, lower_lim), x=farm$I30, y=farm$rc)$minimum
-        I30.pval[[site]] = anova.bp(data, split.on="I30", site=site, discrete.xrange=FALSE, min.in.node=4)
+        th <- optimize(piecewise_constant, c(upper_lim, lower_lim), x=farm$I30, y=farm$rc)$minimum
+        I30.pval[[site]] = anova.bp(data, split.on="I30", site=site, discrete.xrange=FALSE, min.in.node=4, const=TRUE)
         cat( paste(site, ": ", round(th,1), "; p=", I30.pval[[site]], "\n", sep=""))
     }
 @
@@ -264,6 +277,7 @@ Now split the data into two bins based on the soil moisure breakpoint (above vs.
     I30.breakpoints = list()
     limits = list()
     I30.pval = list()
+    fit.I30 = list()
 
     for(site in farms) {
         limits[[site]] = c(0, breakpoints[[site]], Inf)
@@ -275,10 +289,13 @@ Now split the data into two bins based on the soil moisure breakpoint (above vs.
             bin = site_data[site_data$sm>=limits[[site]][i] & site_data$sm<limits[[site]][i+1] & !is.na(site_data$I30),]
             lower_lim = sort( bin$I30 )[4]
             upper_lim = sort(bin$I30, decreasing=T )[4]
-            th <- optimize(piecewise, c(upper_lim, lower_lim), x=bin$I30, y=bin$rc)$minimum
-            I30.pval[[site]][i] = anova.bp(data[data$sm>=limits[[site]][i] & 
+            th <- optimize(piecewise_constant, c(upper_lim, lower_lim), x=bin$I30, y=bin$rc)$minimum
+            I30.pval[[site]][[i]] = anova.bp(data[data$sm>=limits[[site]][i] & 
                 data$sm<limits[[site]][i+1] & !is.na(data$I30),], split.on="I30",
-                site=site, discrete.xrange=FALSE, min.in.node=4)
+                site=site, discrete.xrange=FALSE, min.in.node=4, const=TRUE)
+            fit.I30[[site]][[i]] = anova.bp(data[data$sm>=limits[[site]][i] & 
+                data$sm<limits[[site]][i+1] & !is.na(data$I30),], split.on="I30",
+                site=site, discrete.xrange=FALSE, min.in.node=4, const=TRUE, return.models=TRUE)[["bp"]]
             cat( paste(limits[[site]][i], " <= SM < ", limits[[site]][i+1], ": ", round(th,1), "; p=", I30.pval[[site]][i], "\n", sep=""))
             bp = c(bp, th)
         }
@@ -304,7 +321,8 @@ Now split the data into two bins based on the soil moisure breakpoint (above vs.
                              xlab="I30",
                              ylab="runoff coefficient",
                              title=titles[i],
-                             p=I30.pval[[site]][i])
+                             p=I30.pval[[site]][[i]],
+                             fit=fit.I30[[site]][[i]])
         }
     }
 @
@@ -325,6 +343,7 @@ When we put the events in bins based on their antecedent soil moisture (SM: high
 <<label=precip_by_binned_SM, include=False, echo=False>>=
     precip.breakpoints = list()
     precip.pval = list()
+    fit.prec = list()
     
     for(site in farms) {
         site_data = data[data$site==site,]
@@ -335,10 +354,13 @@ When we put the events in bins based on their antecedent soil moisture (SM: high
             bin = site_data[site_data$sm>=limits[[site]][i] & site_data$sm<limits[[site]][i+1] & !is.na(site_data$prec),]
             lower_lim = sort( bin$prec )[4]
             upper_lim = sort(bin$prec, decreasing=T )[4]
-            th <- optimize(piecewise, c(upper_lim, lower_lim), x=bin$prec, y=bin$rc)$minimum
-            precip.pval[[site]][i] = anova.bp(data[data$sm>=limits[[site]][i] & 
+            th <- optimize(piecewise_constant, c(upper_lim, lower_lim), x=bin$prec, y=bin$rc)$minimum
+            precip.pval[[site]][[i]] = anova.bp(data[data$sm>=limits[[site]][i] & 
                     data$sm<limits[[site]][i+1] & !is.na(data$prec),], split.on="prec",
-                    site=site, discrete.xrange=FALSE, min.in.node=4)
+                    site=site, discrete.xrange=FALSE, min.in.node=, const=TRUE)
+            fit.prec[[site]][[i]] = anova.bp(data[data$sm>=limits[[site]][i] & 
+                    data$sm<limits[[site]][i+1] & !is.na(data$prec),], split.on="prec",
+                    site=site, discrete.xrange=FALSE, min.in.node=4, const=TRUE, return.models=TRUE)[["bp"]]
             cat( paste(limits[[site]][i], " <= SM < ", limits[[site]][i+1], ": ", round(th,2), "; p=", precip.pval[[site]][i], "\n", sep=""))
             bp = c(bp, th)
         }
@@ -365,7 +387,8 @@ When we put the events in bins based on their antecedent soil moisture (SM: high
                              xlab="precip",
                              ylab="runoff coefficient",
                              title=titles[i],
-                             p=precip.pval[[site]][i])
+                             p=precip.pval[[site]][[i]],
+                             fit=fit.prec[[site]][[i]])
         }
     }
 @

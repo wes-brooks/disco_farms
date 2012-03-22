@@ -1,7 +1,7 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2012.1.11)  22 MAR 2012 13:08
+This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2012.1.11)  22 MAR 2012 14:13
 entering extended mode
-**C:/Users/wrbrooks/git/disco_farms/runoff.tex
-(C:/Users/wrbrooks/git/disco_farms/runoff.tex
+**C:/Users/wrbrooks/git/disco_farms/runoff_constants.tex
+(C:/Users/wrbrooks/git/disco_farms/runoff_constants.tex
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, ge
 rman, ngerman, german-x-2009-06-19, ngerman-x-2009-06-19, french, loaded.
@@ -346,7 +346,7 @@ LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
 LaTeX Font Info:    Try loading font information for T1+aer on input line 100.
 ("C:\Program Files (x86)\MiKTeX 2.8\tex\latex\ae\t1aer.fd"
 File: t1aer.fd 1997/11/16 Font definitions for T1/aer.
-)))) (C:\Users\wrbrooks\git\disco_farms\runoff.aux)
+)))) (C:\Users\wrbrooks\git\disco_farms\runoff_constants.aux)
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
 LaTeX Font Info:    ... okay on input line 20.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
@@ -428,10 +428,10 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 LaTeX Font Info:    Try loading font information for T1+aett on input line 34.
 ("C:\Program Files (x86)\MiKTeX 2.8\tex\latex\ae\t1aett.fd"
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
-) <runoff-sm.pdf, id=1, 505.89pt x 650.43pt>
-File: runoff-sm.pdf Graphic file (type pdf)
-<use runoff-sm.pdf>
-Package pdftex.def Info: runoff-sm.pdf used on input line 54.
+) <runoff_constants-sm.pdf, id=1, 505.89pt x 650.43pt>
+File: runoff_constants-sm.pdf Graphic file (type pdf)
+<use runoff_constants-sm.pdf>
+Package pdftex.def Info: runoff_constants-sm.pdf used on input line 54.
 (pdftex.def)             Requested size: 422.77664pt x 543.57854pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 60--61
@@ -453,38 +453,40 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!{C:/Users/wrbrooks/AppData/Local/MiKTeX/2.8/pdftex/conf
-ig/pdftex.map}] [2 <C:/Users/wrbrooks/git/disco_farms/runoff-sm.pdf>] <runoff-I
-30_binned.pdf, id=19, 505.89pt x 578.16pt>
-File: runoff-I30_binned.pdf Graphic file (type pdf)
-<use runoff-I30_binned.pdf>
-Package pdftex.def Info: runoff-I30_binned.pdf used on input line 101.
+ig/pdftex.map}] [2 <C:/Users/wrbrooks/git/disco_farms/runoff_constants-sm.pdf>]
+<runoff_constants-I30_binned.pdf, id=19, 505.89pt x 578.16pt>
+File: runoff_constants-I30_binned.pdf Graphic file (type pdf)
+<use runoff_constants-I30_binned.pdf>
+Package pdftex.def Info: runoff_constants-I30_binned.pdf used on input line 101
+.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 107--108
 
  []
 
-<runoff-precip_binned.pdf, id=20, 505.89pt x 578.16pt>
-File: runoff-precip_binned.pdf Graphic file (type pdf)
-<use runoff-precip_binned.pdf>
-Package pdftex.def Info: runoff-precip_binned.pdf used on input line 131.
+<runoff_constants-precip_binned.pdf, id=20, 505.89pt x 578.16pt>
+File: runoff_constants-precip_binned.pdf Graphic file (type pdf)
+<use runoff_constants-precip_binned.pdf>
+Package pdftex.def Info: runoff_constants-precip_binned.pdf used on input line 
+131.
 (pdftex.def)             Requested size: 422.77664pt x 483.18092pt.
-[3] [4 <C:/Users/wrbrooks/git/disco_farms/runoff-I30_binned.pdf>] [5 <C:/Users/
-wrbrooks/git/disco_farms/runoff-precip_binned.pdf>] (C:\Users\wrbrooks\git\disc
-o_farms\runoff.aux) ) 
+[3] [4 <C:/Users/wrbrooks/git/disco_farms/runoff_constants-I30_binned.pdf>] [5 
+<C:/Users/wrbrooks/git/disco_farms/runoff_constants-precip_binned.pdf>] (C:\Use
+rs\wrbrooks\git\disco_farms\runoff_constants.aux) ) 
 Here is how much of TeX's memory you used:
  7011 strings out of 495285
- 100696 string characters out of 3180048
+ 100946 string characters out of 3180048
  189816 words of memory out of 3000000
  10101 multiletter control sequences out of 15000+200000
  16432 words of font info for 45 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
- 44i,6n,73p,618b,334s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files (x86)/MiKTeX 2.8/fonts/type1/public/amsf
-onts/cm/cmr12.pfb><C:/Program Files (x86)/MiKTeX 2.8/fonts/type1/public/amsfont
-s/cm/cmr17.pfb><C:/Program Files (x86)/MiKTeX 2.8/fonts/type1/public/amsfonts/c
-m/cmtt12.pfb>
-Output written on runoff.pdf (5 pages, 66255 bytes).
+ 44i,6n,73p,628b,334s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files (x86)/MiKT
+eX 2.8/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKTeX 
+2.8/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Program Files (x86)/MiKTeX 2.8
+/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on runoff_constants.pdf (5 pages, 66169 bytes).
 PDF statistics:
  54 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
